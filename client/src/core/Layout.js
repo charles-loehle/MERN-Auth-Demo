@@ -75,3 +75,5 @@ const Layout = ({ children, match, history }) => {
     </Fragment>
   );
 };
+
+export default withRouter(Layout);
