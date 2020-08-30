@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import Layout from '../core/Layout';
 import axios from 'axios';
 import { isAuth } from './helpers';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+
 const Signup = () => {
   const [values, setValues] = useState({
     name: '',
@@ -12,11 +12,13 @@ const Signup = () => {
     password: '',
     buttonText: 'Submit',
   });
+
   const { name, email, password, buttonText } = values;
   const handleChange = (event) => {
     // console.log(event.target.value);
     setValues({ ...values, [event.target.name]: event.target.value });
   };
+
   const clickSubmit = (event) => {
     event.preventDefault();
     setValues({ ...values, buttonText: 'Submitting' });
@@ -43,6 +45,7 @@ const Signup = () => {
         toast.error(error.response.data.error);
       });
   };
+
   const signupForm = (
     <form>
       <div className="form-group">
@@ -82,22 +85,22 @@ const Signup = () => {
       </div>
     </form>
   );
+
   return (
-    <Layout>
-      <div className="col-md-6 offset-md-3">
-        <ToastContainer />
-        {isAuth() ? <Redirect to="/" /> : null}
-        <h1 className="p-5 text-center">Signup</h1>
-        {signupForm}
-        <br />
-        <Link
-          to="/auth/password/forgot"
-          className="btn btn-sm btn-outline-danger"
-        >
-          Forgot Password
-        </Link>
-      </div>
-    </Layout>
+    <div className="col-md-6 offset-md-3">
+      <ToastContainer />
+      {isAuth() ? <Redirect to="/" /> : null}
+      <h1 className="p-5 text-center">Signup</h1>
+      {signupForm}
+      <br />
+      <Link
+        to="/auth/password/forgot"
+        className="btn btn-sm btn-outline-danger"
+      >
+        Forgot Password
+      </Link>
+    </div>
   );
 };
+
 export default Signup;

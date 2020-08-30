@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../core/Layout';
 import axios from 'axios';
 import { isAuth, updateUser, getCookie, signout } from '../auth/helpers';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import { Container, Row, Col } from 'reactstrap';
+
 const Private = ({ history }) => {
   const [values, setValues] = useState({
     role: '',
@@ -12,11 +13,14 @@ const Private = ({ history }) => {
     password: '',
     buttonText: 'Submit',
   });
+
   const token = getCookie('token');
+
   useEffect(() => {
     loadProfile();
     // eslint-disable-next-line
   }, []);
+
   const loadProfile = () => {
     axios({
       method: 'GET',
@@ -26,12 +30,12 @@ const Private = ({ history }) => {
       },
     })
       .then((response) => {
-        console.log('PRIVATE PROFILE UPDATE', response);
+        // console.log('PRIVATE PROFILE UPDATE', response);
         const { role, name, email } = response.data;
         setValues({ ...values, role, name, email });
       })
       .catch((error) => {
-        console.log('PRIVATE PROFILE UPDATE ERROR', error.response.data.error);
+        // console.log('PRIVATE PROFILE UPDATE ERROR', error.response.data.error);
         if (error.response.status === 401) {
           signout(() => {
             history.push('/');
@@ -39,11 +43,14 @@ const Private = ({ history }) => {
         }
       });
   };
+
   const { role, name, email, password, buttonText } = values;
+
   const handleChange = (event) => {
     // console.log(event.target.value);
     setValues({ ...values, [event.target.name]: event.target.value });
   };
+
   const clickSubmit = (event) => {
     event.preventDefault();
     setValues({ ...values, buttonText: 'Submitting' });
@@ -57,7 +64,7 @@ const Private = ({ history }) => {
       data: { name, password },
     })
       .then((response) => {
-        console.log('PRIVATE PROFILE UPDATE SUCCESS', response);
+        // console.log('PRIVATE PROFILE UPDATE SUCCESS', response);
         updateUser(response, () => {
           setValues({
             ...values,
@@ -67,11 +74,12 @@ const Private = ({ history }) => {
         });
       })
       .catch((error) => {
-        console.log('PRIVATE PROFILE UPDATE ERROR', error.response.data.error);
+        // console.log('PRIVATE PROFILE UPDATE ERROR', error.response.data.error);
         setValues({ ...values, buttonText: 'Submit' });
         toast.error(error.response.data.error);
       });
   };
+
   const updateForm = (
     <form>
       <div className="form-group">
@@ -121,15 +129,16 @@ const Private = ({ history }) => {
       </div>
     </form>
   );
+
   return (
-    <Layout>
+    <Container>
       <div className="col-md-6 offset-md-3">
         <ToastContainer />
         <h1 className="pt-5 text-center">Private</h1>
         <p className="lead text-center">Update Profile</p>
         {updateForm}
       </div>
-    </Layout>
+    </Container>
   );
 };
 export default Private;

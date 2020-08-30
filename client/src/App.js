@@ -1,18 +1,23 @@
-import React from 'react';
-import Layout from './core/Layout';
+import React, { Fragment } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import NavbarComponent from './core/NavbarComponent';
+import Landing from './core/Landing.js';
+import Routes from './Routes';
+import AuthState from './context/AuthState';
+
 const App = () => {
   return (
-    <Layout>
-      <div className="col-md-6 offset-md-3 text-center">
-        <h1 className="p-5">MERN Stack Authentication Boilerplate</h1>
-        <p className="lead">
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-          dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-          proident, sunt in culpa qui officia deserunt mollit anim id est
-          laborum.
-        </p>
-      </div>
-    </Layout>
+    <AuthState>
+      <Router>
+        <Fragment>
+          <NavbarComponent />
+          <Switch>
+            <Route exact path="/" component={Landing} />
+            <Routes component={Routes} />
+          </Switch>
+        </Fragment>
+      </Router>
+    </AuthState>
   );
 };
 export default App;

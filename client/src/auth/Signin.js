@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Redirect, Link } from 'react-router-dom';
-import Layout from '../core/Layout';
 import axios from 'axios';
 import { authenticate, isAuth } from './helpers';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import AuthContext from '../context/authContext';
+
 const Signin = ({ history }) => {
+  const authContext = useContext(AuthContext);
+
+  const { setIsAuthenticated } = authContext;
+
   const [values, setValues] = useState({
     email: '',
     password: '',
     buttonText: 'Submit',
   });
+
   const { email, password, buttonText } = values;
+
   const handleChange = (event) => {
     // console.log(event.target.value);
     setValues({ ...values, [event.target.name]: event.target.value });
   };
+
   const clickSubmit = (event) => {
     event.preventDefault();
     setValues({ ...values, buttonText: 'Submitting' });
@@ -25,7 +33,8 @@ const Signin = ({ history }) => {
       data: { email, password },
     })
       .then((response) => {
-        console.log('SIGNIN SUCCESS', response);
+        setIsAuthenticated();
+        // console.log('SIGNIN SUCCESS', response);
         // save the response (user, token) localstorage/cookie
         authenticate(response, () => {
           setValues({
@@ -35,7 +44,7 @@ const Signin = ({ history }) => {
             password: '',
             buttonText: 'Submitted',
           });
-          // toast.success(`Hey ${response.data.user.name}, Welcome back!`);
+          toast.success(`Hey ${response.data.user.name}, Welcome back!`);
           isAuth() && isAuth().role === 'admin'
             ? history.push('/admin')
             : history.push('/private');
@@ -47,6 +56,7 @@ const Signin = ({ history }) => {
         toast.error(error.response.data.error);
       });
   };
+
   const signinForm = (
     <form>
       <div className="form-group">
@@ -76,22 +86,22 @@ const Signin = ({ history }) => {
       </div>
     </form>
   );
+
   return (
-    <Layout>
-      <div className="col-md-6 offset-md-3">
-        <ToastContainer />
-        {isAuth() ? <Redirect to="/" /> : null}
-        <h1 className="p-5 text-center">Signin</h1>
-        {signinForm}
-        <br />
-        <Link
-          to="/auth/password/forgot"
-          className="btn btn-sm btn-outline-danger"
-        >
-          Forgot Password
-        </Link>
-      </div>
-    </Layout>
+    <div className="col-md-6 offset-md-3">
+      <ToastContainer />
+      {isAuth() ? <Redirect to="/" /> : null}
+      <h1 className="p-5 text-center">Signin</h1>
+      {signinForm}
+      <br />
+      <Link
+        to="/auth/password/forgot"
+        className="btn btn-sm btn-outline-danger"
+      >
+        Forgot Password
+      </Link>
+    </div>
   );
 };
+
 export default Signin;
